@@ -1,0 +1,17 @@
+.container-box{
+  // padding: 12px;
+  height: 100%;
+  background: rgb(240,242,245);
+  .container-box-title {
+    display: flex;
+    align-items: center;
+    padding-bottom: 12px;
+    font-size:16px;
+    justify-content: space-between
+  }
+  .container-box-content{
+    padding: 20px;
+    background: #FFF;
+    min-height: calc(100% - 32px);
+  }
+}

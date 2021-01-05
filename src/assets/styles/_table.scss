@@ -1,0 +1,152 @@
+.el-table--striped {
+  &::before, &::after {
+    background: transparent !important;
+  }
+  border-color: transparent !important;
+  th {
+    padding: 4px 0 !important;
+    background: #FAFBFE !important;
+    border-top: 1px solid #ebeef5 !important;
+    border-bottom: 1px solid #ebeef5 !important;
+    border-right-color: rgba($color: #ebeef5, $alpha: 0.5);
+    &:hover {
+      background: rgba($color: #ebeef5, $alpha: 0.5) !important;
+      & > .cell {
+        color: #2680eb !important;
+      }
+    }
+    & > .cell {
+      line-height: 22px !important;
+      color: #909399 !important;
+    }
+  }
+  td {
+    border-right: none !important;
+    border-bottom-color: #F2F6FA;
+  }
+  .el-table__header {
+    thead {
+      position: relative;
+      &::before, &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 1px;
+        background: #ebeef5;
+        z-index: 2;
+      }
+      &::after {
+        right: 0;
+        left: auto;
+      }
+    }
+  }
+  .el-table__body {
+    tr {
+      position: relative;
+      z-index: 1;
+      &:hover {
+        z-index: 99;
+        td {
+          position: relative;
+          background: #EEF6FF !important;
+          border-bottom-color: #B7D8FF !important;
+          &::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #B7D8FF;
+            z-index: 2;
+          }
+          &:first-child {
+            &::after {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              bottom: 0;
+              width: 1px;
+              background: #B7D8FF;
+              z-index: 2;
+            }
+          }
+          &:last-child {
+            &::after {
+              content: '';
+              position: absolute;
+              top: 0;
+              right: 0;
+              bottom: 0;
+              width: 1px;
+              background: #B7D8FF;
+              z-index: 2;
+            }
+          }
+        }
+      }
+      &.el-table__row--striped {
+        td {
+          background: #FAFBFE !important;
+        }
+        &:hover {
+          td {
+            background: #EEF6FF !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+.table-style{ 
+  .table-tool{
+    .action-bar{
+      margin-bottom: 16px;
+      text-align: left;
+      font-size: 0;
+      .search{
+        float: right;
+      }
+    }
+    .span-folder {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      align-items: center;
+      margin-bottom: 16px;
+      text-align: left;
+      font-size: 13px;
+      .delimiter {
+        padding: 0 3px;
+        color: #c5d8f3;
+      }
+      .each {
+        display:flex;
+        li {
+          color: #1BB0FF;
+          cursor: pointer;
+        }
+        li::after {
+          content:">";
+          padding:0 5px;
+          color: #2c3e50;
+        }
+        li:last-child {
+          color: #2c3e50;
+          cursor:text;
+        }
+        li:last-child::after {
+          display:none !important;
+        }
+      }
+    }
+    .pd-row {
+      padding: 0;
+    }
+  }
+}

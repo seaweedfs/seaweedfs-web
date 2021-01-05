@@ -1,0 +1,57 @@
+.navbar {
+    background: $navbarBgColor;
+    height: $navbarHeight;
+    box-shadow: 0 2px 2px rgba($color: #000000, $alpha: 0.16);
+    display: flex;
+    .navbar-header {
+        position: relative;
+        // width: $sidebarWidth;
+        overflow:hidden;
+        .navbar-brand {
+            display:flex;
+            flex-direction:row;
+            align-items:center;
+            cursor: pointer;
+            padding: 4px 8px;
+            img {
+                height: 32px;
+            }
+        }
+    }
+    .navbar-collapse {
+        flex: 1;
+        .navbar-right {
+            margin: 0;
+            float: right;
+            li {
+                float: left;
+                color: rgba($color: #ffffff, $alpha: 0.7);
+                line-height: $navbarHeight;
+                font-size: 12px;
+                padding: 0 12px;
+                margin-left: 8px;
+                transition: all .3s ease;
+                cursor: pointer;
+                &:hover {
+                    background: rgba($color: #ffffff, $alpha: 0.1);
+                    color: #FFF;
+                }
+                .user-menu {
+                    margin: 0 -12px;
+                    padding: 4px 12px;
+                    height: 34px;
+                    dd {
+                        margin: 0;
+                        padding: 0 16px 0 0;
+                        position: relative;
+                        i {
+                            position: absolute;
+                            right: -5px;
+                            top: 12px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
