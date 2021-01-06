@@ -1,6 +1,6 @@
 # seaweedfs-web
 
-> A Vue.js project
+A Vue.js project to enhance default SeaweedFS Filer UI.
 
 ## Build Setup
 
