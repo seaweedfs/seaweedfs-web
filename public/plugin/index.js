@@ -1,7 +1,7 @@
 
 export default {
   install: function(Vue, options) { //
-    Vue.prototype.$table_select_repeat = function(serverSelected, tableList, dom, type, idKey) { // 列表勾选项复现
+    Vue.prototype.$table_select_repeat = function(serverSelected, tableList, dom, type, idKey) { // list check option recurrence
       var select_table = JSON.stringify(serverSelected)
       select_table = JSON.parse(select_table)
       var key = 'id'
@@ -37,7 +37,7 @@ export default {
         return val
       }
     }
-    Vue.prototype.$handle_http_back = (res, isOk, isErr, msg) => { // 返回结果处理函数,res数据，isok = true不显示成功提示fasle显示，isErr = true,不显示错误提示false显示，elm暂时不用
+    Vue.prototype.$handle_http_back = (res, isOk, isErr, msg) => { // return result processing function, res data, isok = true does not display success prompt fasle display, isErr = true, does not display error prompt false display, elm is temporarily not used
       return new Promise((resolve, reject) => {
         if (res.status == 200 || res.status == 201) {
           if (!isOk) {

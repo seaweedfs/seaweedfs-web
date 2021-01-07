@@ -142,7 +142,6 @@ export default {
     path(newValue, oldValue) {
       Bus.$emit('pathChange', newValue)
       this.$router.push({ path: '/file', query: { path: newValue }})
-      console.log(this.$route.query.path, 'this.router.query.path')
     },
     '$route.query.path'(newValue, oldValue) {
       this.path = newValue
@@ -158,6 +157,7 @@ export default {
     }
   },
   methods: {
+    //
     loadMore() {
       this.limit += 50
       file_http.get_filer_folder(this.path, this.limit)
@@ -172,7 +172,7 @@ export default {
           this.messageBox('error', err.error)
         })
     },
-    // 上传
+    // upload files
     httpRequest(params) {
       if (params.file.size <= 0) {
         this.$message({
@@ -200,6 +200,7 @@ export default {
         this.messageBox('error', err.error)
       })
     },
+    // delete folder
     delFile(response) {
       var arrs = response.data.map((item, index) => {
         return file_http.del_filer_folder(response.delForm.recursive, response.delForm.ignore_recursive_error, response.delForm.skip_chunk_deletion, item.name + (item.msg.Md5 ? '' : '/'))
@@ -217,6 +218,7 @@ export default {
         this.getList()
       })
     },
+    // get 50 default files
     getList() {
       this.rootDirectory = this.path
       this.loading = true
@@ -235,6 +237,7 @@ export default {
           this.loading = false
         })
     },
+    // processing class name
     processingClassName(isshow, str) {
       if (isshow) {
         const str1 = str.substring(str.lastIndexOf('\/') + 1, str.length)
@@ -247,7 +250,7 @@ export default {
         return '#icon-wenjianjia'
       }
     },
-    // 返回上一级
+    // back to previous
     showUp() {
       if (this.path.lastIndexOf('\/') === 0) {
         this.path = '/'
@@ -256,7 +259,7 @@ export default {
       }
       this.getList()
     },
-    // 点击lable
+    // click the label to do
     clickLabel(data) {
       if (!data.Md5) {
         this.path = (this.path === '/' ? '' : this.path) + data.FullPath.substring(data.FullPath.lastIndexOf('\/'), data.FullPath.length)
@@ -265,7 +268,7 @@ export default {
         this.downFile(data)
       }
     },
-    // 下载
+    // download file
     downFile(data) {
       var str
       if (data.Md5) {

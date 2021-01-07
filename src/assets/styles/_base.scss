@@ -31,6 +31,9 @@ body {
   background-color: #c3cad4;
   border-radius: 10px;
   border: 2px solid #e1e5ea;
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+  background-color: #f5f7fa !important;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -45,6 +48,11 @@ body {
 
 ::-webkit-scrollbar-thumb:window-inactive {
   background-color: #666666
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 0;
+  background: #f1f1f1;
 }
 
 

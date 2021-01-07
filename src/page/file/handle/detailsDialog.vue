@@ -110,12 +110,14 @@ export default {
       this.dialogFormVisible = true
       this.getFileTagging()
     },
+    // show input
     showInput() {
       this.inputVisible = true
       this.$nextTick(_ => {
         this.$refs.saveTagInput.$refs.input.focus()
       })
     },
+    // handle input confirm
     handleInputConfirm() {
       var data = {}
       data['seaweed-' + this.inputValue] = this.inputValue
@@ -137,18 +139,15 @@ export default {
         this.inputValue = ''
       }
     },
-    // 删除单个标签
+    // delete a single label
     removeItem(item) {
-      console.log(item, 'item')
       var data = {}
       this.taggingArr.forEach(ele => {
-        console.log(ele.key, ele, '333')
         if (ele.key !== item.key && ele.value !== item.value) {
           data['seaweed-' + ele.key] = ele.value
         }
       })
       file_http.del_filer(this.fileDetails.FullPath + '?tagging').then(res => {
-        console.log(res, 'res')
         if (res.status === 202 || res.status === 304) {
           this.$axios.put(this.fileDetails.FullPath + '?tagging', '', { headers: data }).then((res) => {
             if (res.status === 202) {
@@ -166,11 +165,11 @@ export default {
         this.messageBox('error', err)
       })
     },
+    // get label
     getFileTagging() {
       this.dialogFormLoading = true
       this.$http.head(`${window.g.filer}${this.fileDetails.FullPath}`).then(res => {
         this.taggingArr = []
-        console.log(res, 'res.headers', Object.keys(res.headers.map))
         if (res.status == 200) {
           Object.keys(res.headers.map).forEach(item => {
             if (item.search('seaweed-') !== -1) {
@@ -189,7 +188,7 @@ export default {
         this.dialogFormLoading = false
       })
     },
-    // 删除标签
+    // delete all tags
     delTagging() {
       this.dialogFormLoading = true
       file_http.del_filer(this.fileDetails.FullPath + '?tagging').then((res) => {
@@ -203,6 +202,7 @@ export default {
         this.messageBox('error', err.error)
       })
     },
+    // close details box
     handleClose() {
       this.$nextTick(() => {
         this.taggingArr = []

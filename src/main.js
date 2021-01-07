@@ -11,28 +11,28 @@ import myPlugin from './my-plugin.js'
 import publicPlugin from '~/plugin'
 import * as custom from '~/filter'
 import VueI18n from 'vue-i18n'
-// 引入vue-resource
+// introduce vue-resource
 import VueResource from 'vue-resource'
 
 Object.keys(custom).forEach((key) => {
   Vue.filter(key, custom[key])
 })
 
-// 使用vue-resource
+// use vue-resource
 Vue.use(VueResource)
 
 axios.defaults.baseURL = window.g.filer
 axios.defaults.headers.Accept = 'application/json'
 Vue.prototype.$axios = axios
 Vue.config.productionTip = false
-Vue.use(VueI18n) // 通过插件的形式挂载
+Vue.use(VueI18n) // mount via plugin
 Vue.use(ElementUI, { size: 'small' })
 
 const i18n = new VueI18n({
-  locale: window.g.locale, // 语言标识
+  locale: window.g.locale, // language
   messages: {
-    'zh-CN': require('./common/lang/zh'), // 中文语言包
-    'en-US': require('./common/lang/en') // 英文语言包
+    'zh-CN': require('./common/lang/zh'), // Chinese language pack
+    'en-US': require('./common/lang/en') // English language pack
   }
 })
 window.addEventListener('storage', function(e) {
@@ -40,7 +40,7 @@ window.addEventListener('storage', function(e) {
     window.location.reload()
   }
 })
-// 全局混入
+// global mixin
 Vue.mixin({
   data() {
     return {
@@ -62,12 +62,12 @@ Vue.mixin({
         duration: duration
       })
     },
-    open_dialog(name, data) { // 打开弹框
+    open_dialog(name, data) { // open the bullet box
       this.$nextTick(() => {
         this.$refs[name].open_dialog(data)
       })
     },
-    // 表单重置
+    // form reset
     resetForm(formN) {
       if (formN) {
         formN.resetFields()

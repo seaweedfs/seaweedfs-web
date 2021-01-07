@@ -1,7 +1,4 @@
-// import service from 'axios'
 import service from '@/http/base-http/interceptor'
-
-// 请求拦截器
 
 export function get(url, params) {
   return new Promise((resolve, reject) => {
@@ -18,7 +15,6 @@ export function post(url, params) {
     service.post(url, params).then(res => {
       resolve(res)
     }).catch(err => {
-      console.log(err, 'err111111')
       reject(err)
     })
   })

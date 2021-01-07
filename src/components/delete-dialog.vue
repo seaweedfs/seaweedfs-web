@@ -60,7 +60,7 @@
           </div>
         </div>
         <div>
-          <el-form :model="delForm" :rules="rules" ref="form" style="margin:10px" label-width="380px" v-if="tree">
+          <el-form :model="delForm" ref="form" style="margin:10px" label-width="380px" v-if="tree">
             <el-form-item :label="$t('deletePage.whetherToDeleteRecursively')+':'">
               <el-checkbox v-model="delForm.recursive"></el-checkbox>
             </el-form-item>
@@ -99,10 +99,10 @@
 </template>
 
 <script>
-/** 说明
- * 删除弹框 支持多选
+/** description
+ * delete the bullet box, support multiple selection
  *
-  // 头部可配置项
+  // head configurable items
   headerConfig={
     background:'',
     padding:'12px 16px 16px 16px',
@@ -110,23 +110,23 @@
     color:'#333',
     fontWeight:'400',
   }
-  尾部可配置项
+  tail configurable items
   footerConfig={
     background:'',
     padding:'12px 16px 16px 16px',
     textAlign: 'center'
   }
 
-  传入表单对象 form
+ incoming form object form
 
   eg:
   <dialog :isShow.sync="test" @confirm="dialogTest" ref="testDialog" title="我是头部" :form="testObj">
-    我是要一个小测试
+    I want a little test
   </dialog>
 
-  数据处理函数，每个参数为必填。
-  参数1，传入返回值，参数2，是否需要正确信息提示，参数3是否需要错误信息提示，参数4弹框的对象。
-  then里面处理状态正确的，catch处理状态错误的。
+  data processing function, each parameter is required.
+  parameter 1, the return value is passed in, parameter 2, whether the correct information prompt is required, whether the parameter 3 requires an error information prompt, and the parameter 4 is the object of the pop-up box.
+  then the processing state is correct, and the catch processing state is wrong.
   this.$handle_http_back(data,false,true,this.$refs['testDialog']).then((res)=>{
     this.test = false;
     console.log(res);
@@ -134,13 +134,13 @@
   }).catch((err)=>{
     console.log(err)
   })
-  noLoading 不需要按钮loading，true不需要，默认需要
-  isDisabled 确定按钮disaled
-  list 传入数据 array
-  nameKey 删除对象对应的名称字段
-  idKey 删除对象对应的ID字段
-  tooltip 提示语句 string
-  type 只适用释放公网ip freed
+  noLoading no button loading required, true not required, required by default
+  isDisabled oK button disabled
+  list incoming data array
+  nameKey delete the name field corresponding to the object
+  idKey delete the ID field corresponding to the object
+  tooltip prompt statement string
+  type only applicable to release public network ip freed
 **/
 export default {
   props: [
@@ -177,16 +177,6 @@ export default {
           value: 'HTTP'
         }
       ],
-      protocolForm: {
-        protocol: ''
-      },
-      rules: {
-        protocol: {
-          required: true,
-          message: '请选择协议',
-          trigger: 'change'
-        }
-      },
       delForm: {
         recursive: true,
         skip_chunk_deletion: false,
@@ -287,29 +277,7 @@ export default {
     },
     confirm() {
       var _this = this
-      if (_this.type === 'open') {
-        this.$refs.form.validate((valid) => {
-          if (valid) {
-            var back = ''
-            if (this.result_list[0]) {
-              back = this.result_list
-            } else {
-              back = this.select_list
-            }
-            _this.confirm_loading = true
-            this.$emit('confirm', {
-              status: true,
-              data: back,
-              protocol: _this.protocolForm.protocol,
-              close: function() {
-                _this.confirm_loading = false
-              }
-            })
-          } else {
-            return false
-          }
-        })
-      } else if (_this.tree) {
+      if (_this.tree) {
         this.$refs.form.validate((valid) => {
           if (valid) {
             var back = ''

@@ -1,4 +1,4 @@
-<!--用户界面-->
+<!--user interface-->
 <template>
   <div class="header">
     <div class="navbar">
@@ -51,17 +51,16 @@ export default {
   mounted() {
     Bus.$on('pathChange', this.getAData)
     this.qrcode = new QRCode(this.$refs.qrCodeUrl, {
-      text: window.location.href, // 需要转换为二维码的内容
+      text: window.location.href, // what needs to be converted into a QR code
       width: 33,
       height: 33,
       colorDark: '#000000',
       colorLight: '#ffffff'
-      // correctLevel: QRCode.CorrectLevel.H
     })
     this.codeUrl = new QRCode(this.$refs.codeUrl, {
-      text: window.location.href, // 需要转换为二维码的内容
-      width: 100,
-      height: 100,
+      text: window.location.href, // what needs to be converted into a QR code
+      width: 130,
+      height: 130,
       colorDark: '#000000',
       colorLight: '#ffffff',
       correctLevel: QRCode.CorrectLevel.H
@@ -75,10 +74,7 @@ export default {
       this.$router.push(path)
     },
     getAData(val) {
-      // this.qrcode.clera()
       this.qrcode.makeCode(window.location.href.split('=')[0] + '=' + val)
-      console.log(window.location.href.split('=')[0] + '=' + val, 'window.location.href', val)
-      // this.codeUrl.clera()
       this.codeUrl.makeCode(window.location.href.split('=')[0] + '=' + val)
     }
   },
@@ -95,8 +91,8 @@ export default {
   display: inline-block;
 }
 .codeUrl img {
-  width: 100px;
-  height: 100px;
+  width: 130px;
+  height: 130px;
   background-color: #fff; 
   padding: 6px; 
   box-sizing: border-box;
