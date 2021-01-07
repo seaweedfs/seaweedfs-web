@@ -2,7 +2,7 @@ import { get, post, put, del } from '@/http/base-http/base-http'
 import axios from 'axios'
 
 export const get_filer_folder = // 获取文件列表
-(path, limit, lastFileName, pretty) => get(`${path}`)
+(path, limit, lastFileName, pretty) => get(`${path}?limit=${limit}`)
 
 export const post_filer_folder = // 创建目录
 (path) => post(`${path}`)

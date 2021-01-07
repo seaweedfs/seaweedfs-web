@@ -159,7 +159,7 @@ export default {
   methods: {
     loadMore() {
       this.limit += 50
-      file_http.get_filer_folder(this.path)
+      file_http.get_filer_folder(this.path, this.limit)
         .then(res => {
           if (res.status === 200) {
             this.currentPath = this.path
@@ -192,7 +192,7 @@ export default {
       this.rootDirectory = this.path
       this.loading = true
       this.limit = 50
-      file_http.get_filer_folder(this.path)
+      file_http.get_filer_folder(this.path, this.limit)
         .then(res => {
           if (res.status === 200) {
             this.currentPath = this.path
