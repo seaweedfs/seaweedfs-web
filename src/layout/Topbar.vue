@@ -13,7 +13,7 @@
           <li>
             <el-popover
               placement="bottom-end"
-              width="100"
+              width="130"
               v-model="visible">
               <div style="width: 100px;color:#ccc;" v-loading="this.exit_loading">
                 <div class="codeUrl" ref="codeUrl"></div>

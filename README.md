@@ -42,4 +42,15 @@ window.g = {
 }
 ```
 
+## Configure the local boot address
+>config\index.js
+``` javascript
+// modify the cost machine ip address
+module.exports = {
+  dev: {
+    host: '127.0.0.1'
+  }
+}
+```
+
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
