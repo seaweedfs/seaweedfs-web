@@ -243,31 +243,7 @@ export default {
         const str1 = data.FullPath.substring(data.FullPath.lastIndexOf('\/'), data.FullPath.length)
         str = (this.path === '/' ? '' : this.path) + str1
       }
-      file_http.download(str).then(res1 => {
-        console.log(res1, '``````````')
-        var contentDsiposition = res1.headers['content-disposition']
-        const content = res1.data
-        const blob = new Blob([content], { type: res1.headers['content-type'] })
-        const fileName = decodeURI(contentDsiposition.substr(contentDsiposition.indexOf('=') + 1)).replace(/\"/g, '')
-        const elink = document.createElement('a')
-        elink.download = fileName
-        elink.style.display = 'none'
-        elink.href = URL.createObjectURL(blob)
-        document.body.appendChild(elink)
-        elink.click()
-        URL.revokeObjectURL(elink.href) // 释放URL 对象
-        document.body.removeChild(elink)
-        if (res1.status === 200) {
-          this.$message({
-            type: 'success',
-            message: this.$t('homePage.downloadSuccessfulPrompt')
-          })
-        } else {
-          this.$message.error(this.$t('homePage.downloadFailurePrompt'))
-        }
-      }).catch((err) => {
-        console.log(err)
-      })
+      window.location.href = window.g.filer + str
     },
     handleSelectionChange(currentRow) {
       var flagActive = false
