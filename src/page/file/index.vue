@@ -7,7 +7,9 @@
             <el-col :span="14">
               <el-button type="primary"  @click="path = currentPath,getList()" icon="el-icon-refresh-right"></el-button>
               <el-button type="primary"  @click="$refs.addDirectoryDialog.open_dialog(path)" icon="el-icon-plus">{{$t('homePage.mkdir')}}</el-button>
-              <el-button type="primary" @click="$refs.uploadFilesDialog.open_dialog(path)" icon="el-icon-upload2">{{$t('homePage.upload')}}</el-button>
+              <el-upload style="display: inline;margin: 0 10px;" ref="upload" :show-file-list="false" :http-request="httpRequest" :action="uploadUrl">
+                <el-button slot="trigger" size="small" type="primary" icon="el-icon-upload2">{{$t('uploadFilesPage.upload')}}</el-button>
+              </el-upload>
               <el-button :disabled="selected.length == 0" type="danger" @click="operate(null, 'delBatchDialog')" icon="el-icon-delete">{{$t('homePage.delete')}}</el-button>
             </el-col>
             <el-col :span="10">
@@ -81,7 +83,6 @@
     <add-directory-dialog ref="addDirectoryDialog" @ok="getList" />
     <delete-directory-dialog ref="deleteDirectoryDialog" @ok="getList" />
     <details-dialog ref="detailsDialog" @ok="getList" />
-    <upload-files-dialog ref="uploadFilesDialog" @ok="getList" />
   </div>
 </template>
 
@@ -90,7 +91,6 @@ import * as file_http from '@/http/file-http/file-http'
 import AddDirectoryDialog from './handle/addDirectoryDialog'
 import DeleteDirectoryDialog from './handle/deleteDirectoryDialog'
 import DetailsDialog from './handle/detailsDialog'
-import UploadFilesDialog from './handle/uploadFilesDialog'
 import Bus from '@/bus.js'
 
 export default {
@@ -98,11 +98,12 @@ export default {
   components: {
     AddDirectoryDialog,
     DeleteDirectoryDialog,
-    DetailsDialog,
-    UploadFilesDialog
+    DetailsDialog
   },
   data() {
     return {
+      uploadUrl: '/sugon-gdb/v1/backups',
+
       path: '/',
       currentPath: '',
       rootDirectory: '',
@@ -170,6 +171,34 @@ export default {
         }).catch(err => {
           this.messageBox('error', err.error)
         })
+    },
+    // 上传
+    httpRequest(params) {
+      if (params.file.size <= 0) {
+        this.$message({
+          message: this.$t('uploadFilesPage.button'),
+          type: 'error'
+        })
+        return
+      }
+      const data = new FormData()
+      data.append('multiFile', params.file)
+      this.$axios.post((this.path === '/' ? '' : this.path + '/') + params.file.name, data).then((res) => {
+        if (res.status === 201) {
+          this.$message({
+            message: this.$t('uploadFilesPage.uploadSuccessfully'),
+            type: 'success'
+          })
+          this.getList()
+        } else {
+          this.$message({
+            message: res.data.status_mes,
+            type: 'error'
+          })
+        }
+      }).catch(err => {
+        this.messageBox('error', err.error)
+      })
     },
     delFile(response) {
       var arrs = response.data.map((item, index) => {
