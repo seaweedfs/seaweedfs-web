@@ -1,0 +1,27 @@
+.details{
+  dl {
+    margin: 0;
+    font-size: 12px;
+    border-top: 1px solid #f8f9fa;
+    min-height: 30px;
+    padding: 6px 0;
+    line-height: 35px;
+    dt {
+      float: left;
+      color: #999;
+    }
+    dd {
+      margin-left: 90px;
+    }
+  }
+  dl:first-child {
+    border: none;
+  }
+}
+
+.row-layout{
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  justify-content: space-between;
+}
