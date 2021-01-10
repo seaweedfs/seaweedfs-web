@@ -104,7 +104,9 @@
 }
 
 .table-style{ 
+  height: 100%;
   .table-tool{
+    height: 100%;
     .action-bar{
       margin-bottom: 16px;
       text-align: left;
@@ -147,6 +149,8 @@
     }
     .pd-row {
       padding: 0;
+      overflow: auto;
+      height: calc(100% - 86px);
     }
   }
 }

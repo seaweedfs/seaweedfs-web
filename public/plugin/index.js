@@ -37,6 +37,20 @@ export default {
         return val
       }
     }
+    Vue.prototype.$debounce = function(fn,time = 100){
+      var _this = this
+      return function () {
+       // 保存函数调用时的上下文和参数，传递给 fn
+       var context = this
+       var args = arguments
+       clearTimeout(_this.debounce_timer)
+         // 当返回的函数被最后一次调用后（也就是用户停止了某个连续的操作），
+       // 再过 delay 毫秒就执行 fn
+       _this.debounce_timer = setTimeout(function () {
+           fn.apply(context, args)
+       },time)
+     }()
+    },
     Vue.prototype.$handle_http_back = (res, isOk, isErr, msg) => { // return result processing function, res data, isok = true does not display success prompt fasle display, isErr = true, does not display error prompt false display, elm is temporarily not used
       return new Promise((resolve, reject) => {
         if (res.status == 200 || res.status == 201) {

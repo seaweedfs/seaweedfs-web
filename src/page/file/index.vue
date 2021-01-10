@@ -1,6 +1,6 @@
 <template>
   <div class="table-style">
-    <el-row>
+    <el-row style="height:100%">
       <div class="table-tool">
         <div class="action-bar">
           <el-row>
@@ -32,13 +32,13 @@
             <li v-for="(item,index) in pathItmes" :key="index" @click="path=item.path,getList()">{{item.name}}</li>
           </ul>
         </div>
-        <div class="pd-row" v-infinite-scroll="loadMore" :infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+        <div class="pd-row infinite-list" v-infinite-scroll="loadMore" :infinite-scroll-distance="100" :infinite-scroll-disabled="busy">
           <el-table :data="assetsTreeList" stripe v-loading="loading" @selection-change="handleSelectionChange" ref="table_dom" style="width: 100%" :default-sort = "{prop: 'date', order: 'ascending'}">
             <el-table-column type="selection" width="45"></el-table-column>
             <el-table-column prop="" :label="$t('homePage.fileType')" width="80" align="center">
               <template slot-scope="scope">
                  <svg class="icon" aria-hidden="true">
-                  <use :xlink:href="processingClassName(scope.row.Md5,scope.row.FullPath)"></use>
+                  <use :xlink:href="processingClassName(scope.row.Mode,scope.row.FullPath)"></use>
                 </svg>
               </template>
             </el-table-column>
@@ -112,7 +112,10 @@ export default {
       selected: [],
       List: [],
       dialogDelete: false,
-      assetsTreeList: []
+      assetsTreeList: [],
+      loadedArr:[],
+      loadeTime:null,
+      loadeState:true
     }
   },
   computed: {
@@ -159,18 +162,27 @@ export default {
   methods: {
     //
     loadMore() {
-      this.limit += 50
-      file_http.get_filer_folder(this.path, this.limit)
+      this.limit = 50
+      let str = this.assetsTreeList[this.assetsTreeList.length - 1] ? this.assetsTreeList[this.assetsTreeList.length - 1].FullPath : ''
+      let lastFileName = str ? str.substring(str.lastIndexOf('\/') + 1, str.length) : ''
+      if(this.loadedArr.indexOf(str.Crtime) === -1 && this.loadeState){
+        this.loadeState = false
+        setTimeout(()=>{
+          this.loadeState = true
+        },2000)
+        file_http.get_filer_folder(this.path, this.limit, lastFileName)
         .then(res => {
           if (res.status === 200) {
+            this.loadedArr.push(str.Crtime)
             this.currentPath = this.path
-            this.assetsTreeList = res.data.Entries ? res.data.Entries : []
+            this.assetsTreeList = res.data.Entries ? this.assetsTreeList.concat(res.data.Entries) : this.assetsTreeList
           } else {
             this.assetsTreeList = []
           }
         }).catch(err => {
           this.messageBox('error', err.error)
         })
+      }
     },
     // upload files
     httpRequest(params) {
@@ -238,16 +250,17 @@ export default {
         })
     },
     // processing class name
-    processingClassName(isshow, str) {
-      if (isshow) {
+    processingClassName(mode, str) {
+      var val = mode & 1 << (32 - 1 - 0)
+      if (val < 0) {
+        return '#icon-wenjianjia'
+      } else {
         const str1 = str.substring(str.lastIndexOf('\/') + 1, str.length)
         if (str1.lastIndexOf('\.') !== -1) {
           return '#icon-' + str1.substring(str1.lastIndexOf('\.') + 1, str1.length).toLowerCase()
         } else {
           return '#icon-weizhiwenjian'
         }
-      } else {
-        return '#icon-wenjianjia'
       }
     },
     // back to previous
