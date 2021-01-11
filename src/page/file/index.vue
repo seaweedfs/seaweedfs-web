@@ -244,6 +244,7 @@ export default {
     },
     // get 50 default files
     getList() {
+      this.loadedArr = []
       this.rootDirectory = this.path
       this.loading = true
       this.limit = 50
@@ -297,10 +298,8 @@ export default {
     // download file
     downFile(data) {
       var str
-      if (data.Md5) {
-        const str1 = data.FullPath.substring(data.FullPath.lastIndexOf('\/'), data.FullPath.length)
-        str = (this.path === '/' ? '' : this.path) + str1
-      }
+      const str1 = data.FullPath.substring(data.FullPath.lastIndexOf('\/'), data.FullPath.length)
+      str = (this.path === '/' ? '' : this.path) + str1
       window.location.href = window.g.filer + str
     },
     handleSelectionChange(currentRow) {
