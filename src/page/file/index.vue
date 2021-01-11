@@ -244,6 +244,7 @@ export default {
     },
     // get 50 default files
     getList() {
+      this.loadedArr = []
       this.rootDirectory = this.path
       this.loading = true
       this.limit = 50
