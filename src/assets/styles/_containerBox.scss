@@ -13,8 +13,8 @@
   .container-box-content{
     padding: 20px;
     background: #FFF;
-    min-height: calc(100% - 40px);
-    height: 100%;
+    // min-height: calc(100% - 40px);
+    height: calc(100% - 40px);
     // overflow: hidden;
   }
 }

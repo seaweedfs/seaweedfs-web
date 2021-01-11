@@ -32,7 +32,7 @@
             <li v-for="(item,index) in pathItmes" :key="index" @click="path=item.path,getList()">{{item.name}}</li>
           </ul>
         </div>
-        <div class="pd-row infinite-list" v-infinite-scroll="loadMore" :infinite-scroll-distance="100" :infinite-scroll-disabled="busy">
+        <div class="pd-row infinite-list" @scroll="loadMore($event)" id="pd-row">
           <el-table :data="assetsTreeList" stripe v-loading="loading" @selection-change="handleSelectionChange" ref="table_dom" style="width: 100%" :default-sort = "{prop: 'date', order: 'ascending'}">
             <el-table-column type="selection" width="45"></el-table-column>
             <el-table-column prop="" :label="$t('homePage.fileType')" width="80" align="center">
@@ -62,7 +62,7 @@
             <el-table-column prop="operate" :label="$t('homePage.operating')">
               <template slot-scope="scope">
                 <el-button size="mini" type="button" circle @click="$refs.deleteDirectoryDialog.open_dialog(path,scope.row)" icon="el-icon-delete"></el-button>
-                <el-button size="mini" type="button" circle :disabled="!scope.row.Md5" @click="$refs.detailsDialog.open_dialog(scope.row, path)">
+                <el-button size="mini" type="button" circle :disabled="detailDisabled(scope.row.Mode)" @click="$refs.detailsDialog.open_dialog(scope.row, path)">
                   <svg class="icon" aria-hidden="true" style=" width: 14px;height: 14px;">
                     <use xlink:href="#icon-icon_huabanfuben"></use>
                   </svg>
@@ -160,28 +160,40 @@ export default {
     }
   },
   methods: {
+    detailDisabled(mode){
+      var val = mode & 1 << (32 - 1 - 0)
+      if (val < 0) {
+        return true
+      }else{
+        return false
+      }
+    },
     //
-    loadMore() {
-      this.limit = 50
-      let str = this.assetsTreeList[this.assetsTreeList.length - 1] ? this.assetsTreeList[this.assetsTreeList.length - 1].FullPath : ''
-      let lastFileName = str ? str.substring(str.lastIndexOf('\/') + 1, str.length) : ''
-      if(this.loadedArr.indexOf(str.Crtime) === -1 && this.loadeState){
-        this.loadeState = false
-        setTimeout(()=>{
-          this.loadeState = true
-        },2000)
-        file_http.get_filer_folder(this.path, this.limit, lastFileName)
-        .then(res => {
-          if (res.status === 200) {
-            this.loadedArr.push(str.Crtime)
-            this.currentPath = this.path
-            this.assetsTreeList = res.data.Entries ? this.assetsTreeList.concat(res.data.Entries) : this.assetsTreeList
-          } else {
-            this.assetsTreeList = []
-          }
-        }).catch(err => {
-          this.messageBox('error', err.error)
-        })
+    loadMore(e) {
+      let scrollHeight = this.$refs.table_dom.$el.offsetHeight - document.getElementById('pd-row').clientHeight
+      if(e.target.scrollTop >= scrollHeight - 40){
+        this.limit = 50
+        let str = this.assetsTreeList[this.assetsTreeList.length - 1] ? this.assetsTreeList[this.assetsTreeList.length - 1].FullPath : ''
+        let lastFileName = str ? str.substring(str.lastIndexOf('\/') + 1, str.length) : ''
+        if(this.loadedArr.indexOf(lastFileName) === -1 && this.loadeState){
+          this.loadeState = false
+          setTimeout(()=>{
+            this.loadeState = true
+          },1000)
+          file_http.get_filer_folder(this.path, this.limit, lastFileName)
+          .then(res => {
+            if (res.status === 200) {
+              e.target.scrollTop = scrollHeight - 40
+              this.loadedArr.push(lastFileName)
+              this.currentPath = this.path
+              this.assetsTreeList = res.data.Entries ? this.assetsTreeList.concat(res.data.Entries) : this.assetsTreeList
+            } else {
+              this.assetsTreeList = []
+            }
+          }).catch(err => {
+            this.messageBox('error', err.error)
+          })
+        }
       }
     },
     // upload files
@@ -274,7 +286,8 @@ export default {
     },
     // click the label to do
     clickLabel(data) {
-      if (!data.Md5) {
+      var val = data.Mode & 1 << (32 - 1 - 0)
+      if (val < 0) {
         this.path = (this.path === '/' ? '' : this.path) + data.FullPath.substring(data.FullPath.lastIndexOf('\/'), data.FullPath.length)
         this.getList()
       } else {
