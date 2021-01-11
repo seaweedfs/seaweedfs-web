@@ -113,9 +113,9 @@ export default {
       List: [],
       dialogDelete: false,
       assetsTreeList: [],
-      loadedArr:[],
-      loadeTime:null,
-      loadeState:true
+      loadedArr: [],
+      loadeTime: null,
+      loadeState: true
     }
   },
   computed: {
@@ -160,39 +160,39 @@ export default {
     }
   },
   methods: {
-    detailDisabled(mode){
+    detailDisabled(mode) {
       var val = mode & 1 << (32 - 1 - 0)
       if (val < 0) {
         return true
-      }else{
+      } else {
         return false
       }
     },
     //
     loadMore(e) {
-      let scrollHeight = this.$refs.table_dom.$el.offsetHeight - document.getElementById('pd-row').clientHeight
-      if(e.target.scrollTop >= scrollHeight - 40){
+      const scrollHeight = this.$refs.table_dom.$el.offsetHeight - document.getElementById('pd-row').clientHeight
+      if (e.target.scrollTop >= scrollHeight - 40) {
         this.limit = 50
-        let str = this.assetsTreeList[this.assetsTreeList.length - 1] ? this.assetsTreeList[this.assetsTreeList.length - 1].FullPath : ''
-        let lastFileName = str ? str.substring(str.lastIndexOf('\/') + 1, str.length) : ''
-        if(this.loadedArr.indexOf(lastFileName) === -1 && this.loadeState){
+        const str = this.assetsTreeList[this.assetsTreeList.length - 1] ? this.assetsTreeList[this.assetsTreeList.length - 1].FullPath : ''
+        const lastFileName = str ? str.substring(str.lastIndexOf('\/') + 1, str.length) : ''
+        if (this.loadedArr.indexOf(lastFileName) === -1 && this.loadeState) {
           this.loadeState = false
-          setTimeout(()=>{
+          setTimeout(() => {
             this.loadeState = true
-          },1000)
+          }, 1000)
           file_http.get_filer_folder(this.path, this.limit, lastFileName)
-          .then(res => {
-            if (res.status === 200) {
-              e.target.scrollTop = scrollHeight - 40
-              this.loadedArr.push(lastFileName)
-              this.currentPath = this.path
-              this.assetsTreeList = res.data.Entries ? this.assetsTreeList.concat(res.data.Entries) : this.assetsTreeList
-            } else {
-              this.assetsTreeList = []
-            }
-          }).catch(err => {
-            this.messageBox('error', err.error)
-          })
+            .then(res => {
+              if (res.status === 200) {
+                e.target.scrollTop = scrollHeight - 40
+                this.loadedArr.push(lastFileName)
+                this.currentPath = this.path
+                this.assetsTreeList = res.data.Entries ? this.assetsTreeList.concat(res.data.Entries) : this.assetsTreeList
+              } else {
+                this.assetsTreeList = []
+              }
+            }).catch(err => {
+              this.messageBox('error', err.error)
+            })
         }
       }
     },
