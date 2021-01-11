@@ -1,6 +1,7 @@
 .container-box{
   // padding: 12px;
   height: 100%;
+  //overflow: hidden;
   background: rgb(240,242,245);
   .container-box-title {
     display: flex;
@@ -12,6 +13,8 @@
   .container-box-content{
     padding: 20px;
     background: #FFF;
-    min-height: calc(100% - 32px);
+    // min-height: calc(100% - 40px);
+    height: calc(100% - 40px);
+    // overflow: hidden;
   }
 }
