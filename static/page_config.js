@@ -1,4 +1,4 @@
 window.g = {
-  filer: 'http://172.17.8.17:30888',
+  filer: 'http://127.0.0.1:8888',
   locale: 'en-US'
 }
