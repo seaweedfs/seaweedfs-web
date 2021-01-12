@@ -148,6 +148,8 @@ export default {
     },
     '$route.query.path'(newValue, oldValue) {
       this.path = newValue
+      newValue ? this.path = newValue : this.path = '/'
+      this.getList()
     }
   },
   created() {
