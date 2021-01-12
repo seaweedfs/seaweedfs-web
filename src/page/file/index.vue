@@ -33,7 +33,7 @@
           </ul>
         </div>
         <div class="pd-row infinite-list" id="pd-row">
-          <el-table :data="assetsTreeList" stripe v-loading="loading" @selection-change="handleSelectionChange" ref="table_dom" style="width: 100%" :default-sort = "{prop: 'date', order: 'ascending'}" max-height="100%">
+          <el-table :data="assetsTreeList" stripe v-loading="loading" @selection-change="handleSelectionChange" ref="table_dom" style="width: 100%" :default-sort = "{prop: 'date', order: 'ascending'}" height="100%">
             <el-table-column type="selection" width="45"></el-table-column>
             <el-table-column prop="" :label="$t('homePage.fileType')" width="80" align="center">
               <template slot-scope="scope">
@@ -169,22 +169,24 @@ export default {
         const str = this.assetsTreeList[this.assetsTreeList.length - 1] ? this.assetsTreeList[this.assetsTreeList.length - 1].FullPath : ''
         const lastFileName = str ? str.substring(str.lastIndexOf('\/') + 1, str.length) : ''
         if (this.loadedArr.indexOf(lastFileName) === -1 && this.loadeState) {
-          this.loadeState = false
+          const that = this
+          that.loadeState = false
           setTimeout(() => {
-            this.loadeState = true
+            console.log('3331111')
+            that.loadeState = true
           }, 1000)
-          file_http.get_filer_folder(this.path, this.limit, lastFileName)
+          file_http.get_filer_folder(that.path, that.limit, lastFileName)
             .then(res => {
               if (res.status === 200) {
                 e.target.scrollTop = scrollHeight - 40
-                this.loadedArr.push(lastFileName)
-                this.currentPath = this.path
-                this.assetsTreeList = res.data.Entries ? this.assetsTreeList.concat(res.data.Entries) : this.assetsTreeList
+                that.loadedArr.push(lastFileName)
+                that.currentPath = that.path
+                that.assetsTreeList = res.data.Entries ? that.assetsTreeList.concat(res.data.Entries) : that.assetsTreeList
               } else {
-                this.assetsTreeList = []
+                that.assetsTreeList = []
               }
             }).catch(err => {
-              this.messageBox('error', err.error)
+              that.messageBox('error', err.error)
             })
         }
       }
