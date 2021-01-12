@@ -278,13 +278,13 @@ export default {
     processingClassName(mode, str) {
       var val = mode & 1 << (32 - 1 - 0)
       if (val < 0) {
-        return '#icon-wenjianjia'
+        return '#icon-folder'
       } else {
         const str1 = str.substring(str.lastIndexOf('\/') + 1, str.length)
         if (str1.lastIndexOf('\.') !== -1) {
           return '#icon-' + str1.substring(str1.lastIndexOf('\.') + 1, str1.length).toLowerCase()
         } else {
-          return '#icon-weizhiwenjian'
+          return '#icon-unknown'
         }
       }
     },

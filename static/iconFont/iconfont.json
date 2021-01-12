@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "18991766",
+      "name": "unknown",
+      "font_class": "unknown",
+      "unicode": "e88b",
+      "unicode_decimal": 59531
+    },
+    {
+      "icon_id": "6145874",
+      "name": "folder",
+      "font_class": "folder",
+      "unicode": "e6e9",
+      "unicode_decimal": 59113
+    },
+    {
       "icon_id": "10793067",
       "name": "log",
       "font_class": "log",
@@ -1187,20 +1201,6 @@
       "font_class": "Basicsettings",
       "unicode": "e636",
       "unicode_decimal": 58934
-    },
-    {
-      "icon_id": "15416677",
-      "name": "未知文件",
-      "font_class": "weizhiwenjian",
-      "unicode": "e605",
-      "unicode_decimal": 58885
-    },
-    {
-      "icon_id": "16388840",
-      "name": "文件夹",
-      "font_class": "wenjianjia",
-      "unicode": "e67e",
-      "unicode_decimal": 59006
     },
     {
       "icon_id": "356571",
