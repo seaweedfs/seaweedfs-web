@@ -32,8 +32,8 @@
             <li v-for="(item,index) in pathItmes" :key="index" @click="path=item.path,getList()">{{item.name}}</li>
           </ul>
         </div>
-        <div class="pd-row infinite-list" @scroll="loadMore($event)" id="pd-row">
-          <el-table :data="assetsTreeList" stripe v-loading="loading" @selection-change="handleSelectionChange" ref="table_dom" style="width: 100%" :default-sort = "{prop: 'date', order: 'ascending'}">
+        <div class="pd-row infinite-list" id="pd-row">
+          <el-table :data="assetsTreeList" stripe v-loading="loading" @selection-change="handleSelectionChange" ref="table_dom" style="width: 100%" :default-sort = "{prop: 'date', order: 'ascending'}" max-height="100%">
             <el-table-column type="selection" width="45"></el-table-column>
             <el-table-column prop="" :label="$t('homePage.fileType')" width="80" align="center">
               <template slot-scope="scope">
@@ -154,24 +154,17 @@ export default {
     this.$route.query.path ? this.path = this.$route.query.path : this.path = '/'
     this.getList()
   },
-  filters: {
-    interceptString(str) {
-      return str ? str.substring(str.lastIndexOf('\/') + 1, str.length) : ''
-    }
-  },
-  methods: {
-    detailDisabled(mode) {
-      var val = mode & 1 << (32 - 1 - 0)
-      if (val < 0) {
-        return true
-      } else {
-        return false
-      }
-    },
-    //
-    loadMore(e) {
-      const scrollHeight = this.$refs.table_dom.$el.offsetHeight - document.getElementById('pd-row').clientHeight
-      if (e.target.scrollTop >= scrollHeight - 40) {
+  mounted() {
+    // get the table to be bound
+    var dom = this.$refs.table_dom.bodyWrapper
+    dom.addEventListener('scroll', e => {
+      const scrollTop = dom.scrollTop
+      // the variable windowHeight is the height of the viewing area
+      const windowHeight = dom.clientHeight || dom.clientHeight
+      // the variable scrollHeight is the total height of the scroll bar
+      const scrollHeight = dom.scrollHeight || dom.scrollHeight
+      if (scrollTop + windowHeight === scrollHeight) {
+        // not all data is obtained. when scrolling to the bottom, continue to obtain new data
         this.limit = 50
         const str = this.assetsTreeList[this.assetsTreeList.length - 1] ? this.assetsTreeList[this.assetsTreeList.length - 1].FullPath : ''
         const lastFileName = str ? str.substring(str.lastIndexOf('\/') + 1, str.length) : ''
@@ -194,6 +187,21 @@ export default {
               this.messageBox('error', err.error)
             })
         }
+      }
+    })
+  },
+  filters: {
+    interceptString(str) {
+      return str ? str.substring(str.lastIndexOf('\/') + 1, str.length) : ''
+    }
+  },
+  methods: {
+    detailDisabled(mode) {
+      var val = mode & 1 << (32 - 1 - 0)
+      if (val < 0) {
+        return true
+      } else {
+        return false
       }
     },
     // upload files
@@ -244,6 +252,7 @@ export default {
     },
     // get 50 default files
     getList() {
+      this.loadedArr = []
       this.rootDirectory = this.path
       this.loading = true
       this.limit = 50
