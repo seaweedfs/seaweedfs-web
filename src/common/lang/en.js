@@ -49,11 +49,8 @@ export const detailsPage = {
   fileLabel: 'File label',
   editLabel: 'Edit label',
   addLabel: 'Add Label',
-  removeLabel: 'Remove label',
-  message1: 'Please enter key',
-  message2: 'Please enter value',
-  message3: '+Add document label',
-  message4: 'The key prefix must have Seaweed-, please do not delete',
+  removeLabel: 'Delete all tags',
+  message1: 'when the file size is 0, the tagging function is temporarily not available',
   successfullyDeletedPrompt: 'Successfully Deleted',
   addedSuccessfully: 'Added successfully',
   addFailed: 'add failed'
@@ -75,13 +72,20 @@ export const uploadFilesPage = {
 }
 
 export const message = {
-  400: 'There is an error in the request message, and the cloud platform cannot parse the request',
-  401: 'The token in the request message header has not been authenticated or the authentication failed',
-  403: 'The cloud platform has accepted the request, but refused to execute it',
-  404: 'The request failed, the cloud platform did not find the requested resource',
-  405: 'The cloud platform does not support the HTTP method included in the request',
-  413: 'The data size of the request message exceeds the range that the cloud platform is willing or able to handle',
-  503: 'The cloud platform is overloaded and the request cannot be processed currently'
+  204: 'The request was successfully processed, no entity body returned',
+  206: 'GET range request has been successfully processed',
+  301: 'Permanent redirection, the resource has been permanently assigned a new URI',
+  302: 'Temporary redirection, the resource has been temporarily assigned a new URI',
+  303: 'Temporary redirection, expecting to use GET to get targeted',
+  304: 'The conditional request sent was not met',
+  307: 'Temporary redirect, POST will not become GET',
+  400: 'Request message syntax error or parameter error',
+  401: 'HTTP authentication is required, or authentication failed',
+  403: 'Requested resource rejected',
+  404: 'The requested resource could not be found (the server refused without reason)',
+  500: 'Server failure or Web application failure',
+  503: 'Server overloaded or down for maintenance',
+  error: 'Solution: 1: Clear the browser history and cache, 2: Check whether the backend address is correct'
 }
 
 export const button = {

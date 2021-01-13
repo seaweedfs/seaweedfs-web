@@ -25,8 +25,9 @@
 </template>
 <script>
   import * as file_http from '@/http/file-http/file-http'
+  import Bus from '@/bus.js'
 
-export default {
+  export default {
     name: 'DeleteDirectoryDialog',
     data() {
       return {
@@ -49,7 +50,7 @@ export default {
     },
     methods: {
       open_dialog(path, row_data) {
-        this.form.Path = (path === '/' ? '' : path) + row_data.FullPath.substring(row_data.FullPath.lastIndexOf('\/'), row_data.FullPath.length) + (row_data.Md5 ? '' : '/')
+        this.form.Path = (path === '/' ? '' : path) + row_data.FullPath.substring(row_data.FullPath.lastIndexOf('\/'), row_data.FullPath.length) + ((row_data.Mode & 1 << (32 - 1 - 0)) < 0 ? '/' : '')
         this.loading = false
         this.dialogFormVisible = true
       },
@@ -63,11 +64,10 @@ export default {
                 this.handleClose()
                 this.$emit('ok')
               } else {
-                this.messageBox('error', res.error)
+                Bus.$emit('errorStatus', res.status)
               }
               this.loading = false
-            }).catch(err => {
-              this.messageBox('error', err.error)
+            }).catch(_ => {
               this.loading = false
             })
           } else {
@@ -85,6 +85,7 @@ export default {
         this.$nextTick(_ => {
           this.$refs.form.clearValidate()
         })
+        this.$emit('ok')
         this.dialogFormVisible = false
       }
     }

@@ -1,7 +1,7 @@
 import { get, post, put, del } from '@/http/base-http/base-http'
 
 export const get_filer_folder = // get file list
-(path, limit, lastFileName) => get(`${path}?limit=${limit}&lastFileName=${lastFileName?lastFileName:''}`)
+(path, limit, lastFileName) => get(`${path}?limit=${limit}&lastFileName=${lastFileName || ''}`)
 
 export const post_filer_folder = // create a directory
 (path) => post(`${path}`)

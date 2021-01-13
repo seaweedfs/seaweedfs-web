@@ -18,8 +18,10 @@ service.interceptors.response.use((response) => {
 }, (error) => {
   if (error && error.response) {
     Bus.$emit('errorStatus', error.response.status)
+  } else {
+    Bus.$emit('errorStatus', 'error')
   }
-  return Promise.reject(error.response.data)
+  // return Promise.reject(error)
 })
 
 export default service

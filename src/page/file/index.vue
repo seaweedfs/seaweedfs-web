@@ -87,262 +87,263 @@
 </template>
 
 <script>
-import * as file_http from '@/http/file-http/file-http'
-import AddDirectoryDialog from './handle/addDirectoryDialog'
-import DeleteDirectoryDialog from './handle/deleteDirectoryDialog'
-import DetailsDialog from './handle/detailsDialog'
-import Bus from '@/bus.js'
+  import * as file_http from '@/http/file-http/file-http'
+  import AddDirectoryDialog from './handle/addDirectoryDialog'
+  import DeleteDirectoryDialog from './handle/deleteDirectoryDialog'
+  import DetailsDialog from './handle/detailsDialog'
+  import Bus from '@/bus.js'
 
-export default {
-  name: 'File',
-  components: {
-    AddDirectoryDialog,
-    DeleteDirectoryDialog,
-    DetailsDialog
-  },
-  data() {
-    return {
-      uploadUrl: '/sugon-gdb/v1/backups',
-
-      path: '/',
-      currentPath: '',
-      rootDirectory: '',
-
-      loading: false,
-      selected: [],
-      List: [],
-      dialogDelete: false,
-      assetsTreeList: [],
-      loadedArr: [],
-      loadeTime: null,
-      loadeState: true
-    }
-  },
-  computed: {
-    busy() {
-      return this.loading || this.assetsTreeList.length === 0
+  export default {
+    name: 'File',
+    components: {
+      AddDirectoryDialog,
+      DeleteDirectoryDialog,
+      DetailsDialog
     },
-    pathItmes() {
-      var arr = [
-        {
-          name: this.$t('homePage.allFiles'),
-          path: '/'
-        }
-      ]
-      this.path.split('/').forEach((item, index) => {
-        if (item) {
-          const obj = {
-            name: item,
-            path: this.path.substring(0, this.path.indexOf(item) + item.length)
+    data() {
+      return {
+        uploadUrl: '/sugon-gdb/v1/backups',
+
+        path: '/',
+        currentPath: '',
+        rootDirectory: '',
+
+        loading: false,
+        selected: [],
+        List: [],
+        dialogDelete: false,
+        assetsTreeList: [],
+        loadedArr: [],
+        loadeTime: null,
+        loadeState: true
+      }
+    },
+    computed: {
+      busy() {
+        return this.loading || this.assetsTreeList.length === 0
+      },
+      pathItmes() {
+        var arr = [
+          {
+            name: this.$t('homePage.allFiles'),
+            path: '/'
           }
-          arr.push(obj)
+        ]
+        this.path.split('/').forEach((item, index) => {
+          if (item) {
+            const obj = {
+              name: item,
+              path: this.path.substring(0, this.path.indexOf(item) + item.length)
+            }
+            arr.push(obj)
+          }
+        })
+        return arr
+      }
+    },
+    watch: {
+      path(newValue, oldValue) {
+        Bus.$emit('pathChange', newValue)
+        this.$router.push({ path: '/file', query: { path: newValue }})
+      },
+      '$route.query.path'(newValue, oldValue) {
+        this.path = newValue
+        newValue ? this.path = newValue : this.path = '/'
+        this.getList()
+      }
+    },
+    created() {
+      this.$route.query.path ? this.path = this.$route.query.path : this.path = '/'
+      this.getList()
+    },
+    mounted() {
+      // get the table to be bound
+      var dom = this.$refs.table_dom.bodyWrapper
+      dom.addEventListener('scroll', e => {
+        const scrollTop = dom.scrollTop
+        // the variable windowHeight is the height of the viewing area
+        const windowHeight = dom.clientHeight || dom.clientHeight
+        // the variable scrollHeight is the total height of the scroll bar
+        const scrollHeight = dom.scrollHeight || dom.scrollHeight
+        if (scrollTop + windowHeight === scrollHeight) {
+          // not all data is obtained. when scrolling to the bottom, continue to obtain new data
+          this.limit = 50
+          const str = this.assetsTreeList[this.assetsTreeList.length - 1] ? this.assetsTreeList[this.assetsTreeList.length - 1].FullPath : ''
+          const lastFileName = str ? str.substring(str.lastIndexOf('\/') + 1, str.length) : ''
+          if (this.loadedArr.indexOf(lastFileName) === -1 && this.loadeState) {
+            const that = this
+            that.loadeState = false
+            setTimeout(() => {
+              that.loadeState = true
+            }, 1000)
+            file_http.get_filer_folder(that.path, that.limit, lastFileName)
+              .then(res => {
+                if (res.status === 200) {
+                  e.target.scrollTop = scrollHeight - 40
+                  that.loadedArr.push(lastFileName)
+                  that.currentPath = that.path
+                  that.assetsTreeList = res.data.Entries ? that.assetsTreeList.concat(res.data.Entries) : that.assetsTreeList
+                } else {
+                  that.assetsTreeList = []
+                }
+              })
+          }
         }
       })
-      return arr
-    }
-  },
-  watch: {
-    path(newValue, oldValue) {
-      Bus.$emit('pathChange', newValue)
-      this.$router.push({ path: '/file', query: { path: newValue }})
     },
-    '$route.query.path'(newValue, oldValue) {
-      this.path = newValue
-      newValue ? this.path = newValue : this.path = '/'
-      this.getList()
-    }
-  },
-  created() {
-    this.$route.query.path ? this.path = this.$route.query.path : this.path = '/'
-    this.getList()
-  },
-  mounted() {
-    // get the table to be bound
-    var dom = this.$refs.table_dom.bodyWrapper
-    dom.addEventListener('scroll', e => {
-      const scrollTop = dom.scrollTop
-      // the variable windowHeight is the height of the viewing area
-      const windowHeight = dom.clientHeight || dom.clientHeight
-      // the variable scrollHeight is the total height of the scroll bar
-      const scrollHeight = dom.scrollHeight || dom.scrollHeight
-      if (scrollTop + windowHeight === scrollHeight) {
-        // not all data is obtained. when scrolling to the bottom, continue to obtain new data
-        this.limit = 50
-        const str = this.assetsTreeList[this.assetsTreeList.length - 1] ? this.assetsTreeList[this.assetsTreeList.length - 1].FullPath : ''
-        const lastFileName = str ? str.substring(str.lastIndexOf('\/') + 1, str.length) : ''
-        if (this.loadedArr.indexOf(lastFileName) === -1 && this.loadeState) {
-          const that = this
-          that.loadeState = false
-          setTimeout(() => {
-            console.log('3331111')
-            that.loadeState = true
-          }, 1000)
-          file_http.get_filer_folder(that.path, that.limit, lastFileName)
-            .then(res => {
-              if (res.status === 200) {
-                e.target.scrollTop = scrollHeight - 40
-                that.loadedArr.push(lastFileName)
-                that.currentPath = that.path
-                that.assetsTreeList = res.data.Entries ? that.assetsTreeList.concat(res.data.Entries) : that.assetsTreeList
-              } else {
-                that.assetsTreeList = []
-              }
-            }).catch(err => {
-              that.messageBox('error', err.error)
-            })
-        }
-      }
-    })
-  },
-  filters: {
-    interceptString(str) {
-      return str ? str.substring(str.lastIndexOf('\/') + 1, str.length) : ''
-    }
-  },
-  methods: {
-    detailDisabled(mode) {
-      var val = mode & 1 << (32 - 1 - 0)
-      if (val < 0) {
-        return true
-      } else {
-        return false
+    filters: {
+      interceptString(str) {
+        return str ? str.substring(str.lastIndexOf('\/') + 1, str.length) : ''
       }
     },
-    // upload files
-    httpRequest(params) {
-      if (params.file.size <= 0) {
-        this.$message({
-          message: this.$t('uploadFilesPage.button'),
-          type: 'error'
-        })
-        return
-      }
-      const data = new FormData()
-      data.append('multiFile', params.file)
-      this.$axios.post((this.path === '/' ? '' : this.path + '/') + params.file.name, data).then((res) => {
-        if (res.status === 201) {
-          this.$message({
-            message: this.$t('uploadFilesPage.uploadSuccessfully'),
-            type: 'success'
-          })
-          this.getList()
+    methods: {
+      detailDisabled(mode) {
+        var val = mode & 1 << (32 - 1 - 0)
+        if (val < 0) {
+          return true
         } else {
+          return false
+        }
+      },
+      // upload files
+      httpRequest(params) {
+        if (params.file.size <= 0) {
           this.$message({
-            message: res.data.status_mes,
+            message: this.$t('uploadFilesPage.button'),
             type: 'error'
           })
+          return
         }
-      }).catch(err => {
-        this.messageBox('error', err.error)
-      })
-    },
-    // delete folder
-    delFile(response) {
-      var arrs = response.data.map((item, index) => {
-        return file_http.del_filer_folder(response.delForm.recursive, response.delForm.ignore_recursive_error, response.delForm.skip_chunk_deletion, item.name + (item.msg.Md5 ? '' : '/'))
-      })
-      Promise.all(arrs).then((data) => {
-        response.close()
-        this.dialogDelete = false
-        for (var item of data) {
-          if (item.status === 204) {
-            this.messageBox('success', this.$t('homePage.successfullyDeletedPrompt'))
+        const data = new FormData()
+        data.append('multiFile', params.file)
+        this.$axios.post((this.path === '/' ? '' : this.path + '/') + params.file.name, data).then(res => {
+          if (res.status === 201) {
+            this.$message({
+              message: this.$t('uploadFilesPage.uploadSuccessfully'),
+              type: 'success'
+            })
+            this.getList()
           } else {
-            this.messageBox('error', this.$t('homePage.deleteFailurePrompt'))
+            this.$message({
+              message: res.data.status_mes,
+              type: 'error'
+            })
           }
-        }
-        this.getList()
-      })
-    },
-    // get 50 default files
-    getList() {
-      this.loadedArr = []
-      this.rootDirectory = this.path
-      this.loading = true
-      this.limit = 50
-      file_http.get_filer_folder(this.path, this.limit)
-        .then(res => {
-          if (res.status === 200) {
-            this.currentPath = this.path
-            this.assetsTreeList = res.data.Entries ? res.data.Entries : []
+        }).catch(error => {
+          if (error && error.response) {
+            Bus.$emit('errorStatus', error.response.status)
           } else {
-            this.assetsTreeList = []
+            Bus.$emit('errorStatus', 'error')
           }
-          this.loading = false
-        }).catch(_ => {
-          this.assetsTreeList = []
-          this.loading = false
         })
-    },
-    // processing class name
-    processingClassName(mode, str) {
-      var val = mode & 1 << (32 - 1 - 0)
-      if (val < 0) {
-        return '#icon-folder'
-      } else {
-        const str1 = str.substring(str.lastIndexOf('\/') + 1, str.length)
-        if (str1.lastIndexOf('\.') !== -1) {
-          return '#icon-' + str1.substring(str1.lastIndexOf('\.') + 1, str1.length).toLowerCase()
+      },
+      // delete folder
+      delFile(response) {
+        var arrs = response.data.map((item, index) => {
+          return file_http.del_filer_folder(response.delForm.recursive, response.delForm.ignore_recursive_error, response.delForm.skip_chunk_deletion, item.name + (item.msg.Md5 ? '' : '/'))
+        })
+        Promise.all(arrs).then((data) => {
+          response.close()
+          this.dialogDelete = false
+          for (var item of data) {
+            if (item.status === 204) {
+              this.messageBox('success', this.$t('homePage.successfullyDeletedPrompt'))
+            } else {
+              this.messageBox('error', this.$t('homePage.deleteFailurePrompt'))
+            }
+          }
+          this.getList()
+        })
+      },
+      // get 50 default files
+      getList() {
+        this.loadedArr = []
+        this.rootDirectory = this.path
+        this.loading = true
+        this.limit = 50
+        file_http.get_filer_folder(this.path, this.limit)
+          .then(res => {
+            if (res.status === 200) {
+              this.currentPath = this.path
+              this.assetsTreeList = res.data.Entries ? res.data.Entries : []
+            } else {
+              this.assetsTreeList = []
+            }
+            this.loading = false
+          }).catch(_ => {
+            this.assetsTreeList = []
+            this.loading = false
+          })
+      },
+      // processing class name
+      processingClassName(mode, str) {
+        var val = mode & 1 << (32 - 1 - 0)
+        if (val < 0) {
+          return '#icon-folder'
         } else {
-          return '#icon-unknown'
+          const str1 = str.substring(str.lastIndexOf('\/') + 1, str.length)
+          if (str1.lastIndexOf('\.') !== -1) {
+            return '#icon-' + str1.substring(str1.lastIndexOf('\.') + 1, str1.length).toLowerCase()
+          } else {
+            return '#icon-unknown'
+          }
         }
-      }
-    },
-    // back to previous
-    showUp() {
-      if (this.path.lastIndexOf('\/') === 0) {
-        this.path = '/'
-      } else {
-        this.path = this.path.substring(0, this.path.lastIndexOf('\/'))
-      }
-      this.getList()
-    },
-    // click the label to do
-    clickLabel(data) {
-      var val = data.Mode & 1 << (32 - 1 - 0)
-      if (val < 0) {
-        this.path = (this.path === '/' ? '' : this.path) + data.FullPath.substring(data.FullPath.lastIndexOf('\/'), data.FullPath.length)
+      },
+      // back to previous
+      showUp() {
+        if (this.path.lastIndexOf('\/') === 0) {
+          this.path = '/'
+        } else {
+          this.path = this.path.substring(0, this.path.lastIndexOf('\/'))
+        }
         this.getList()
-      } else {
-        this.downFile(data)
-      }
-    },
-    // download file
-    downFile(data) {
-      var str
-      const str1 = data.FullPath.substring(data.FullPath.lastIndexOf('\/'), data.FullPath.length)
-      str = (this.path === '/' ? '' : this.path) + str1
-      window.location.href = window.g.filer + str
-    },
-    handleSelectionChange(currentRow) {
-      var flagActive = false
-      currentRow.forEach(element => {
-        if (element.used === '1') {
-          flagActive = true
+      },
+      // click the label to do
+      clickLabel(data) {
+        var val = data.Mode & 1 << (32 - 1 - 0)
+        if (val < 0) {
+          this.path = (this.path === '/' ? '' : this.path) + data.FullPath.substring(data.FullPath.lastIndexOf('\/'), data.FullPath.length)
+          this.getList()
+        } else {
+          this.downFile(data)
         }
-      })
-      this.isDisabledActive = flagActive
-      this.selected = currentRow
-    },
-    operate(item, data) {
-      switch (data) {
-        case 'deleteDialog':
-          this.loading = false
-          this.selected = []
-          this.selected.push(item)
-          this.$table_select_repeat(this.selected, this.List, 'table_dom')
-          this.dialogDelete = true
-          break
-        case 'delBatchDialog':
-          this.dialogDelete = true
-          this.loading = false
-          break
-        default:
-          break
+      },
+      // download file
+      downFile(data) {
+        var str
+        const str1 = data.FullPath.substring(data.FullPath.lastIndexOf('\/'), data.FullPath.length)
+        str = (this.path === '/' ? '' : this.path) + str1
+        window.location.href = window.g.filer + str
+      },
+      handleSelectionChange(currentRow) {
+        var flagActive = false
+        currentRow.forEach(element => {
+          if (element.used === '1') {
+            flagActive = true
+          }
+        })
+        this.isDisabledActive = flagActive
+        this.selected = currentRow
+      },
+      operate(item, data) {
+        switch (data) {
+          case 'deleteDialog':
+            this.loading = false
+            this.selected = []
+            this.selected.push(item)
+            this.$table_select_repeat(this.selected, this.List, 'table_dom')
+            this.dialogDelete = true
+            break
+          case 'delBatchDialog':
+            this.dialogDelete = true
+            this.loading = false
+            break
+          default:
+            break
+        }
       }
     }
   }
-}
 </script>
 
 <style scoped>
